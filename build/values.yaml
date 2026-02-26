@@ -1,0 +1,11 @@
+namespace: parasol-insurance-build
+
+gitlab:
+  host: ""
+
+registry:
+  host: ""
+  organization: parasol
+
+image:
+  name: parasol-insurance

@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: parasol-insurance
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: parasol-insurance
+spec:
+  selector:
+    app: parasol-insurance
+  ports:
+    - port: 8005
+      targetPort: 8005
+      protocol: TCP
+      name: http

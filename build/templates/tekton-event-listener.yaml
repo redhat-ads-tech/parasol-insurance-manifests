@@ -1,0 +1,38 @@
+apiVersion: triggers.tekton.dev/v1beta1
+kind: EventListener
+metadata:
+  name: parasol-insurance-tag-listener
+  namespace: {{ .Values.namespace }}
+spec:
+  serviceAccountName: parasol-insurance-build
+  triggers:
+    - name: tag-push
+      interceptors:
+        - ref:
+            name: gitlab
+            kind: ClusterInterceptor
+          params:
+            - name: secretRef
+              value:
+                secretName: gitlab-credentials
+                secretKey: token
+            - name: eventTypes
+              value:
+                - "Tag Push Hook"
+      bindings:
+        - ref: parasol-insurance-tag-binding
+      template:
+        ref: parasol-insurance-tag-template
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: parasol-insurance-tag-listener
+  namespace: {{ .Values.namespace }}
+spec:
+  to:
+    kind: Service
+    name: el-parasol-insurance-tag-listener
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect

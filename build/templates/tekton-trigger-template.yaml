@@ -1,0 +1,32 @@
+apiVersion: triggers.tekton.dev/v1beta1
+kind: TriggerTemplate
+metadata:
+  name: parasol-insurance-tag-template
+  namespace: {{ .Values.namespace }}
+spec:
+  params:
+    - name: git-tag
+    - name: git-revision
+  resourcetemplates:
+    - apiVersion: tekton.dev/v1
+      kind: PipelineRun
+      metadata:
+        generateName: parasol-insurance-tag-promote-
+        namespace: {{ .Values.namespace }}
+      spec:
+        pipelineRef:
+          name: parasol-insurance-tag-promote
+        params:
+          - name: git-tag
+            value: $(tt.params.git-tag)
+          - name: git-revision
+            value: $(tt.params.git-revision)
+        workspaces:
+          - name: shared-workspace
+            volumeClaimTemplate:
+              spec:
+                accessModes:
+                  - ReadWriteOnce
+                resources:
+                  requests:
+                    storage: 1Gi

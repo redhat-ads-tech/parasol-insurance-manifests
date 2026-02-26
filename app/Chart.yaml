@@ -1,0 +1,5 @@
+apiVersion: v2
+name: parasol-insurance-app
+description: Parasol Insurance application deployment
+type: application
+version: 0.1.0
