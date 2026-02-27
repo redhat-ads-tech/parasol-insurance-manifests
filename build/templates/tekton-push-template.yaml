@@ -1,0 +1,21 @@
+apiVersion: triggers.tekton.dev/v1beta1
+kind: TriggerTemplate
+metadata:
+  name: parasol-insurance-push-template
+  namespace: {{ .Values.namespace }}
+spec:
+  params:
+    - name: git-revision
+  resourcetemplates:
+    - apiVersion: shipwright.io/v1beta1
+      kind: BuildRun
+      metadata:
+        generateName: parasol-insurance-push-
+        namespace: {{ .Values.namespace }}
+      spec:
+        build:
+          name: {{ .Values.image.name }}
+        source:
+          type: Git
+          git:
+            revision: $(tt.params.git-revision)

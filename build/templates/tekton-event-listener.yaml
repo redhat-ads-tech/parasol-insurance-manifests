@@ -6,6 +6,23 @@ metadata:
 spec:
   serviceAccountName: parasol-insurance-build
   triggers:
+    - name: push
+      interceptors:
+        - ref:
+            name: gitlab
+            kind: ClusterInterceptor
+          params:
+            - name: secretRef
+              value:
+                secretName: gitlab-credentials
+                secretKey: token
+            - name: eventTypes
+              value:
+                - "Push Hook"
+      bindings:
+        - ref: parasol-insurance-push-binding
+      template:
+        ref: parasol-insurance-push-template
     - name: tag-push
       interceptors:
         - ref:
