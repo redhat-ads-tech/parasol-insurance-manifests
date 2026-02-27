@@ -7,15 +7,29 @@ spec:
   params:
     - name: git-revision
   resourcetemplates:
-    - apiVersion: shipwright.io/v1beta1
-      kind: BuildRun
+    - apiVersion: tekton.dev/v1
+      kind: PipelineRun
       metadata:
         generateName: parasol-insurance-push-
         namespace: {{ .Values.namespace }}
       spec:
-        build:
-          name: {{ .Values.image.name }}
-        source:
-          type: Git
-          git:
-            revision: $(tt.params.git-revision)
+        pipelineRef:
+          name: parasol-insurance-push
+        params:
+          - name: git-revision
+            value: $(tt.params.git-revision)
+        workspaces:
+          - name: source
+            volumeClaimTemplate:
+              spec:
+                accessModes:
+                  - ReadWriteOnce
+                resources:
+                  requests:
+                    storage: 2Gi
+          - name: basic-auth
+            secret:
+              secretName: gitlab-basic-auth
+          - name: dockerconfig
+            secret:
+              secretName: quay-push-secret

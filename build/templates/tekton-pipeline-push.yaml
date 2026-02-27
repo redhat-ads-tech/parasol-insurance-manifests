@@ -1,12 +1,10 @@
 apiVersion: tekton.dev/v1
 kind: Pipeline
 metadata:
-  name: parasol-insurance-tag-promote
+  name: parasol-insurance-push
   namespace: {{ .Values.namespace }}
 spec:
   params:
-    - name: git-tag
-      type: string
     - name: git-revision
       type: string
   workspaces:
@@ -30,7 +28,7 @@ spec:
           workspace: source
         - name: basic-auth
           workspace: basic-auth
-    - name: build-tagged-image
+    - name: build-and-push
       runAfter:
         - clone-source
       taskRef:
@@ -38,7 +36,7 @@ spec:
         kind: ClusterTask
       params:
         - name: IMAGE
-          value: "{{ .Values.registry.host }}/{{ .Values.registry.organization }}/{{ .Values.image.name }}:$(params.git-tag)"
+          value: "{{ .Values.registry.host }}/{{ .Values.registry.organization }}/{{ .Values.image.name }}:latest"
         - name: DOCKERFILE
           value: Containerfile
         - name: TLSVERIFY
@@ -48,14 +46,3 @@ spec:
           workspace: source
         - name: dockerconfig
           workspace: dockerconfig
-    - name: open-prod-pr
-      runAfter:
-        - build-tagged-image
-      taskRef:
-        name: update-prod-manifest
-      params:
-        - name: IMAGE_TAG
-          value: $(params.git-tag)
-      workspaces:
-        - name: source
-          workspace: source

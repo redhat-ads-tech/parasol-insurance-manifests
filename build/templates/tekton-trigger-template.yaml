@@ -22,11 +22,17 @@ spec:
           - name: git-revision
             value: $(tt.params.git-revision)
         workspaces:
-          - name: shared-workspace
+          - name: source
             volumeClaimTemplate:
               spec:
                 accessModes:
                   - ReadWriteOnce
                 resources:
                   requests:
-                    storage: 1Gi
+                    storage: 2Gi
+          - name: basic-auth
+            secret:
+              secretName: gitlab-basic-auth
+          - name: dockerconfig
+            secret:
+              secretName: quay-push-secret
