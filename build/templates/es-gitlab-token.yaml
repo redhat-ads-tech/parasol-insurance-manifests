@@ -14,5 +14,5 @@ spec:
   data:
     - secretKey: token
       remoteRef:
-        key: secrets/gitlab/token
+        key: secrets/parasol-insurance/webhook-secret
         property: value
