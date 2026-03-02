@@ -32,7 +32,7 @@ spec:
         SONAR_PROJECT_KEY="$(params.SONAR_PROJECT_KEY)"
         SONAR_LOGIN="admin"
 
-        ./mvnw verify sonar:sonar \
+        mvn verify sonar:sonar \
           -Dsonar.host.url="${SONAR_HOST_URL}" \
           -Dsonar.projectKey="${SONAR_PROJECT_KEY}" \
           -Dsonar.login="${SONAR_LOGIN}" \
