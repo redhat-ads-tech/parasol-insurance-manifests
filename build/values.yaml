@@ -9,3 +9,6 @@ registry:
 
 image:
   name: parasol-insurance
+
+sonarqube:
+  host: ""

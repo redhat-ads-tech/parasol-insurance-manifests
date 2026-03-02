@@ -33,3 +33,6 @@ spec:
           - name: dockerconfig
             secret:
               secretName: quay-push-secret
+          - name: sonar-credentials
+            secret:
+              secretName: sonarqube-credentials
