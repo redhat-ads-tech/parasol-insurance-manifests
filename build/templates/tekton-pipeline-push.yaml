@@ -61,6 +61,16 @@ spec:
           workspace: source
         - name: dockerconfig
           workspace: dockerconfig
+    - name: rollout-restart
+      runAfter:
+        - build-and-push
+      taskRef:
+        name: rollout-restart
+      params:
+        - name: DEPLOYMENT
+          value: parasol-insurance
+        - name: NAMESPACE
+          value: parasol-insurance-dev
     - name: sonar-scan
       runAfter:
         - clone-source
