@@ -47,6 +47,8 @@ metadata:
   name: parasol-insurance-tag-listener
   namespace: {{ .Values.namespace }}
 spec:
+  port:
+    targetPort: http-listener
   to:
     kind: Service
     name: el-parasol-insurance-tag-listener
