@@ -63,9 +63,11 @@ spec:
           workspace: source
         - name: sonar-credentials
           workspace: sonar-credentials
+        - name: maven-cache
+          workspace: maven-cache
     - name: build-and-push
       runAfter:
-        - maven-build
+        - sonar-scan
       taskRef:
         resolver: cluster
         params:
