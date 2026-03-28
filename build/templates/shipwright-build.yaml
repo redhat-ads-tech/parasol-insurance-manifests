@@ -24,7 +24,9 @@ spec:
       value: paketobuildpacks/run-jammy-base
     - name: env-vars
       values:
-        - value: BP_MAVEN_BUILD_ARGUMENTS=package -DskipTests -Dquarkus.package.jar.type=uber-jar
+        - value: BP_MAVEN_BUILD_ARGUMENTS=package -DskipTests
+        - value: BP_MAVEN_BUILT_ARTIFACT=target/*-runner.jar
+        - value: QUARKUS_PACKAGE_JAR_TYPE=uber-jar
   output:
     image: "{{ .Values.registry.host }}/{{ .Values.registry.organization }}/{{ .Values.image.name }}:latest"
     pushSecret: quay-push-secret
