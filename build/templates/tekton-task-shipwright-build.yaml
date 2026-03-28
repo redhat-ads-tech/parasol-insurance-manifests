@@ -1,0 +1,56 @@
+apiVersion: tekton.dev/v1
+kind: Task
+metadata:
+  name: shipwright-build
+  namespace: {{ .Values.namespace }}
+spec:
+  params:
+    - name: BUILD_NAME
+      type: string
+      description: Name of the Shipwright Build CR to trigger
+    - name: IMAGE_TAG
+      type: string
+      description: Tag for the output image
+      default: latest
+    - name: TIMEOUT
+      type: string
+      description: Timeout for the build
+      default: "10m"
+  results:
+    - name: image-digest
+      description: Digest of the built image
+    - name: buildrun-name
+      description: Name of the BuildRun created
+  steps:
+    - name: create-and-wait
+      image: image-registry.openshift-image-registry.svc:5000/openshift/cli:latest
+      script: |
+        #!/bin/bash
+        set -e
+
+        BUILDRUN_NAME="$(params.BUILD_NAME)-$(date +%s)"
+        echo "Creating BuildRun: ${BUILDRUN_NAME}"
+
+        cat <<YAML | oc create -f -
+        apiVersion: shipwright.io/v1beta1
+        kind: BuildRun
+        metadata:
+          name: ${BUILDRUN_NAME}
+        spec:
+          build:
+            name: $(params.BUILD_NAME)
+          output:
+            image: $(oc get build.shipwright.io $(params.BUILD_NAME) -o jsonpath='{.spec.output.image}' | sed "s/:.*/:$(params.IMAGE_TAG)/")
+            pushSecret: quay-push-secret
+        YAML
+
+        echo -n "${BUILDRUN_NAME}" > $(results.buildrun-name.path)
+        echo "Waiting for BuildRun to complete..."
+
+        oc wait buildrun/${BUILDRUN_NAME} \
+          --for=condition=Succeeded \
+          --timeout=$(params.TIMEOUT)
+
+        DIGEST=$(oc get buildrun ${BUILDRUN_NAME} -o jsonpath='{.status.output.digest}')
+        echo "Build completed. Image digest: ${DIGEST}"
+        echo -n "${DIGEST}" > $(results.image-digest.path)

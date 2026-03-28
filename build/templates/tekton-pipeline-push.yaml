@@ -36,19 +36,9 @@ spec:
           workspace: source
         - name: basic-auth
           workspace: basic-auth
-    - name: maven-build
-      runAfter:
-        - clone-source
-      taskRef:
-        name: maven-build
-      workspaces:
-        - name: source
-          workspace: source
-        - name: maven-cache
-          workspace: maven-cache
     - name: sonar-scan
       runAfter:
-        - maven-build
+        - clone-source
       taskRef:
         name: sonar-scan
       params:
@@ -69,28 +59,12 @@ spec:
       runAfter:
         - sonar-scan
       taskRef:
-        resolver: cluster
-        params:
-          - name: kind
-            value: task
-          - name: name
-            value: buildah
-          - name: namespace
-            value: openshift-pipelines
+        name: shipwright-build
       params:
-        - name: IMAGE
-          value: "{{ .Values.registry.host }}/{{ .Values.registry.organization }}/{{ .Values.image.name }}:latest"
-        - name: DOCKERFILE
-          value: Containerfile
-        - name: TLSVERIFY
-          value: "false"
-        - name: STORAGE_DRIVER
-          value: vfs
-      workspaces:
-        - name: source
-          workspace: source
-        - name: dockerconfig
-          workspace: dockerconfig
+        - name: BUILD_NAME
+          value: parasol-insurance
+        - name: IMAGE_TAG
+          value: latest
     - name: rollout-restart
       runAfter:
         - build-and-push

@@ -1,0 +1,30 @@
+---
+apiVersion: shipwright.io/v1beta1
+kind: Build
+metadata:
+  name: parasol-insurance
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: parasol-insurance
+  annotations:
+    build.shipwright.io/verify.repository: "false"
+spec:
+  source:
+    type: Git
+    git:
+      url: "https://{{ .Values.gitlab.host }}/parasol/parasol-insurance.git"
+    contextDir: .
+  strategy:
+    name: buildpacks
+    kind: ClusterBuildStrategy
+  paramValues:
+    - name: cnb-builder-image
+      value: paketobuildpacks/builder-jammy-base
+    - name: run-image
+      value: paketobuildpacks/run-jammy-base
+  output:
+    image: "{{ .Values.registry.host }}/{{ .Values.registry.organization }}/{{ .Values.image.name }}:latest"
+    pushSecret: quay-push-secret
+  retention:
+    failedLimit: 3
+    succeededLimit: 5
