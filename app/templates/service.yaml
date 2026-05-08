@@ -5,6 +5,7 @@ metadata:
   namespace: {{ .Values.namespace }}
   labels:
     app: parasol-insurance
+    app.kubernetes.io/part-of: parasol-insurance-{{ .Values.environment }}
 spec:
   selector:
     app: parasol-insurance
