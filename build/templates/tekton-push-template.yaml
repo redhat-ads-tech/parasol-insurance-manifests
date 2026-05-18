@@ -12,6 +12,8 @@ spec:
       metadata:
         generateName: parasol-insurance-push-
         namespace: {{ .Values.namespace }}
+        labels:
+          backstage.io/kubernetes-id: parasol-insurance
       spec:
         pipelineRef:
           name: parasol-insurance-push

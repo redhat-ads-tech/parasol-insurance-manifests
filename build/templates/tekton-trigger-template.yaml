@@ -13,6 +13,8 @@ spec:
       metadata:
         generateName: parasol-insurance-tag-promote-
         namespace: {{ .Values.namespace }}
+        labels:
+          backstage.io/kubernetes-id: parasol-insurance
       spec:
         pipelineRef:
           name: parasol-insurance-tag-promote
