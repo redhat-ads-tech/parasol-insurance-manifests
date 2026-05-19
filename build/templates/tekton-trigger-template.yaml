@@ -14,7 +14,7 @@ spec:
         generateName: parasol-insurance-tag-promote-
         namespace: {{ .Values.namespace }}
         labels:
-          backstage.io/kubernetes-id: parasol-insurance
+          app.kubernetes.io/name: parasol-insurance
       spec:
         pipelineRef:
           name: parasol-insurance-tag-promote
